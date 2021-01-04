@@ -1,0 +1,11 @@
+"use strict";
+const userName = "Maximilian";
+const button = document.querySelector("button");
+function clickHandler(message) {
+    console.log("Clicked" + message);
+}
+if (button) {
+    button.addEventListener("click", clickHandler.bind(null, "Hahaha"));
+}
+console.log(userName);
+//# sourceMappingURL=app.js.map
