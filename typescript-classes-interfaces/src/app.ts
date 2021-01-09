@@ -1,124 +1,42 @@
-abstract class Department {
-  static fiscalYear = 2020;
-  // private readonly id: string;
-  // private name: string;
-  // protected is private but allow inherit class
-  protected employees: string[] = [];
+// type AddFn = (a: number, b: number) => number;
 
-  // shorthand constructor
-  constructor(protected readonly id: string, public name: string) {}
+interface AddFn {
+  (a: number, b: number): number;
+}
 
-  static createEmployee(name: string) {
-    return { name: name };
-  }
+let add: AddFn;
 
-  abstract describe(this: Department): void;
+add = (n1: number, n2: number) => {
+  return n1 + n2;
+};
 
-  addEmployee(employee: string) {
-    this.employees.push(employee);
-  }
+interface Named {
+  readonly name?: string;
+  outputName?: string; // optional properties
+}
 
-  printEmployeeInformation() {
-    console.log(this.employees.length);
-    console.log(this.employees);
+// interface can extends many classes
+interface Greetable extends Named {
+  greet(phrase: string): void;
+}
+
+class Person implements Greetable {
+  // automaticly assume name to readonly
+  constructor(public name?: string, public age?: number) {}
+
+  greet(phrase?: string) {
+    if (this.name) {
+      console.log(`${phrase} ${this.name}`);
+    }
+    console.log("Hi");
   }
 }
 
-class ITDepartment extends Department {
-  admins: string[];
+let user1: Greetable;
 
-  constructor(id: string, admins: string[]) {
-    super(id, "IT");
-    this.admins = admins;
-  }
+user1 = new Person();
+user1 = new Person("Max");
 
-  describe() {
-    console.log(`IT Department - ID ${this.id}`);
-  }
-}
+user1.greet("Hi there - I am");
 
-class AccountingDepartment extends Department {
-  private lastReport: string;
-  private static instance: AccountingDepartment;
-
-  get mostRecentReport() {
-    if (this.lastReport) {
-      return this.lastReport;
-    }
-    throw new Error("No report found");
-  }
-
-  set mostRecentReport(value: string) {
-    if (!value) {
-      throw new Error("Please pass in a valid value!");
-    }
-    this.addReport(value);
-  }
-
-  private constructor(id: string, private reports: string[]) {
-    super(id, "ACCOUNTING");
-    this.lastReport = reports[0];
-  }
-
-  static getInstance() {
-    if (AccountingDepartment.instance) {
-      return this.instance;
-    }
-    this.instance = new AccountingDepartment("d2", []);
-    return this.instance;
-  }
-
-  describe() {
-    console.log(`Accounting Department - ID ${this.id}`);
-  }
-
-  addEmployee(name: string) {
-    if (name === "Max") {
-      return;
-    }
-    this.employees.push(name);
-  }
-
-  addReport(text: string) {
-    this.reports.push(text);
-    this.lastReport = text;
-  }
-
-  printReports() {
-    console.log(this.reports);
-  }
-}
-
-const employee1 = Department.createEmployee("Max");
-console.log(employee1, Department.fiscalYear);
-
-const it = new ITDepartment("d1", ["Max"]);
-
-it.addEmployee("Max");
-it.addEmployee("Manu");
-
-it.describe();
-it.printEmployeeInformation();
-
-console.log(it);
-
-// const accounting = new AccountingDepartment("d2", []);
-const accounting = AccountingDepartment.getInstance();
-
-console.log(accounting);
-
-accounting.mostRecentReport = "Please contact me";
-accounting.addReport("Something went wrong...");
-console.log(accounting.mostRecentReport);
-
-accounting.addEmployee("Max");
-accounting.addEmployee("Manu");
-
-// accounting.printReports();
-// accounting.printEmployeeInformation();
-accounting.describe();
-
-// const accountingCopy = { name: "DUMMY", describe: accounting.describe };
-
-// will log an undefined becuz name is undefined
-// accountingCopy.describe();
+console.log(user1);
